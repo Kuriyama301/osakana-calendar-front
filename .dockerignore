@@ -41,3 +41,11 @@ Thumbs.db
 # その他の不要なファイル
 *.swp
 *.swo
+
+# 追加
+app/node_modules
+app/npm-debug.log
+app/yarn-debug.log
+app/yarn-error.log
+.git
+.gitignore

@@ -1,16 +1,22 @@
 FROM node:20-alpine
 
-ARG WORKDIR=/app
-ENV WORKDIR=$WORKDIR
+WORKDIR /app
 
-WORKDIR $WORKDIR
+RUN apk add --no-cache libc6-compat
 
-COPY package*.json ./
-RUN npm install
+# appディレクトリを作成
+RUN mkdir -p /app/app
 
-COPY . .
+# entrypoint.shをコピー
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
-# 開発サーバーのポート
-EXPOSE 3000
+# 既存のappディレクトリの内容をコピー（node_modules以外）
+COPY app /app/app
+# RUN rm -rf /app/app/node_modules
 
-CMD ["npm", "start"]
+WORKDIR /app/app
+
+EXPOSE 5173
+
+CMD ["/bin/sh", "/app/entrypoint.sh"]

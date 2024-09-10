@@ -1,38 +1,31 @@
 # ビルドステージ
 FROM node:20-alpine as build
 
-ARG WORKDIR=/app
-ENV WORKDIR=$WORKDIR
+WORKDIR /app
 
-WORKDIR $WORKDIR
+COPY entrypoint.sh ./
+RUN chmod +x ./entrypoint.sh
 
-COPY package*.json ./
-RUN npm ci --only=production
+COPY app ./app
+WORKDIR /app/app
 
-COPY . .
-RUN npm run build
+# 環境変数を設定
+ENV DEPLOY_ENV=production
+
+# エントリーポイントスクリプトを実行してビルド
+RUN /bin/sh /app/entrypoint.sh
 
 # 実行ステージ
-FROM nginx:alpine
+FROM node:20-alpine
 
-COPY --from=build /app/build /usr/share/nginx/html
+WORKDIR /app
 
-# Nginxの設定ファイルをコピー
-# COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/app/dist ./dist
+COPY --from=build /app/app/package.json ./
+COPY --from=build /app/app/server.js ./
 
-EXPOSE 80
+RUN npm install --only=production
 
-# 非rootユーザーでNginxを実行
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup && \
-    chown -R appuser:appgroup /usr/share/nginx/html && \
-    chmod -R 755 /usr/share/nginx/html && \
-    chown -R appuser:appgroup /var/cache/nginx && \
-    chown -R appuser:appgroup /var/log/nginx && \
-    chown -R appuser:appgroup /etc/nginx/conf.d && \
-    touch /var/run/nginx.pid && \
-    chown -R appuser:appgroup /var/run/nginx.pid
+EXPOSE 3000
 
-USER appuser
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "server.js"]

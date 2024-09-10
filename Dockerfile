@@ -26,6 +26,6 @@ COPY --from=build /app/app/server.js ./
 
 RUN npm install --only=production
 
-EXPOSE 3000
-
+ENV PORT=3000
+EXPOSE $PORT
 CMD ["node", "server.js"]

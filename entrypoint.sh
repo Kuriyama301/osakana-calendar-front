@@ -63,11 +63,9 @@
 
   # 環境に応じてサーバーを起動
   if [ "$DEPLOY_ENV" = "production" ]; then
-      echo "Building for production..."
-      npm run build
-      echo "Starting production server..."
-      npm start
+    echo "Starting production server..."
+    node server.js
   else
-      echo "Starting development server..."
-      npm run dev -- --host
+    echo "Starting development server..."
+    npm run dev -- --host
   fi

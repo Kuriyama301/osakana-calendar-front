@@ -12,7 +12,7 @@ RUN npm run build
 # 実行ステージ
 FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /app/app
 
 COPY --from=build /app/app/dist ./app/dist
 COPY --from=build /app/app/package.json ./app/

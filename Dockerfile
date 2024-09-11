@@ -18,7 +18,7 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./
 COPY --from=build /app/server.js ./
 
-RUN npm ci --only=production
+RUN npm install --only=production
 
 ENV PORT=3000
 EXPOSE $PORT

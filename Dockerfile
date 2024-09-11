@@ -14,11 +14,9 @@ FROM node:20-alpine
 
 WORKDIR /app/app
 
-COPY --from=build /app/app/dist ./app/dist
-COPY --from=build /app/app/package.json ./app/
-COPY --from=build /app/app/server.js ./app/
-
-WORKDIR /app/app
+COPY --from=build /app/app/dist ./dist
+COPY --from=build /app/app/package.json ./
+COPY --from=build /app/app/server.js ./
 
 RUN npm install --only=production
 RUN npm install express

@@ -3,28 +3,22 @@ FROM node:20-alpine as build
 
 WORKDIR /app
 
-COPY entrypoint.sh ./
-RUN chmod +x ./entrypoint.sh
+COPY app/package*.json ./
+RUN npm ci
 
-COPY app ./app
-WORKDIR /app/app
-
-# 環境変数を設定
-ENV DEPLOY_ENV=production
-
-# エントリーポイントスクリプトを実行してビルド
-RUN /bin/sh /app/entrypoint.sh
+COPY app ./
+RUN npm run build
 
 # 実行ステージ
 FROM node:20-alpine
 
 WORKDIR /app
 
-COPY --from=build /app/app/dist ./dist
-COPY --from=build /app/app/package.json ./
-COPY --from=build /app/app/server.js ./
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/package.json ./
+COPY --from=build /app/server.js ./
 
-RUN npm install --only=production
+RUN npm ci --only=production
 
 ENV PORT=3000
 EXPOSE $PORT

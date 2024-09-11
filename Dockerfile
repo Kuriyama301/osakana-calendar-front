@@ -1,7 +1,7 @@
 # ビルドステージ
 FROM node:20-alpine as build
 
-WORKDIR /app
+WORKDIR /app/app
 
 COPY app/package*.json ./
 RUN npm install
@@ -14,9 +14,11 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/package.json ./
-COPY --from=build /app/server.js ./
+COPY --from=build /app/app/dist ./app/dist
+COPY --from=build /app/app/package.json ./app/
+COPY --from=build /app/app/server.js ./app/
+
+WORKDIR /app/app
 
 RUN npm install --only=production
 RUN npm install express

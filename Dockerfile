@@ -5,7 +5,7 @@ COPY app/package*.json ./
 
 # 開発環境
 FROM base as development
-RUN npm install
+RUN npm ci || npm install
 COPY app ./
 RUN chown -R node:node /app
 USER node
@@ -14,7 +14,7 @@ CMD ["npm", "run", "dev", "--", "--host"]
 
 # ビルドステージ
 FROM base as build
-RUN npm ci
+RUN npm ci || npm install
 COPY app ./
 RUN npm run build
 
@@ -24,7 +24,7 @@ WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/server.js ./
-RUN npm ci --only=production
+RUN npm ci --only=production || npm install --only=production
 ENV PORT=3000
 EXPOSE $PORT
 USER node

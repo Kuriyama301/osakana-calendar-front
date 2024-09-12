@@ -2,21 +2,19 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache libc6-compat
+# パッケージをインストールするためにrootユーザーを使用
+COPY app/package*.json ./
+RUN npm install
 
-# appディレクトリを作成
-RUN mkdir -p /app/app
+# アプリケーションのソースコードをコピー
+COPY app ./
 
-# entrypoint.shをコピー
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+# node_modulesの所有者を変更
+RUN chown -R node:node /app
 
-# 既存のappディレクトリの内容をコピー（node_modules以外）
-COPY app /app/app
-# RUN rm -rf /app/app/node_modules
-
-WORKDIR /app/app
+# 非rootユーザーに切り替え
+USER node
 
 EXPOSE 5173
 
-CMD ["/bin/sh", "/app/entrypoint.sh"]
+CMD ["npm", "run", "dev", "--", "--host"]

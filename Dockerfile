@@ -1,35 +1,31 @@
-# ビルドステージ
-FROM node:20-alpine as build
-
-WORKDIR /app/app
-
+# ベースイメージ
+FROM node:20-alpine as base
+WORKDIR /app
 COPY app/package*.json ./
-RUN npm install
 
+# 開発環境
+FROM base as development
+RUN npm install
+COPY app ./
+RUN chown -R node:node /app
+USER node
+EXPOSE 5173
+CMD ["npm", "run", "dev", "--", "--host"]
+
+# ビルドステージ
+FROM base as build
+RUN npm ci
 COPY app ./
 RUN npm run build
 
-# 実行ステージ
-FROM node:20-alpine
-
-WORKDIR /app/app
-
-COPY --from=build /app/app/dist ./dist
-COPY --from=build /app/app/package.json ./
-COPY --from=build /app/app/server.js ./
-
-RUN npm install --only=production
-RUN npm install express
-
+# 本番環境
+FROM node:20-alpine as production
+WORKDIR /app
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/package*.json ./
+COPY --from=build /app/server.js ./
+RUN npm ci --only=production
 ENV PORT=3000
 EXPOSE $PORT
-
-# entrypoint.shをコピーして実行権限を付与
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-# ENTRYPOINTを設定
-ENTRYPOINT ["/entrypoint.sh"]
-
-# CMDはENTRYPOINTスクリプトに引数として渡される
+USER node
 CMD ["node", "server.js"]

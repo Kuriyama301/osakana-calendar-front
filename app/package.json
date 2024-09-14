@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --ext .js,.jsx --config eslint.config.js",
+    "lint": "eslint .",
     "preview": "vite preview",
     "start": "node server.js",
     "heroku-postbuild": "npm run build",

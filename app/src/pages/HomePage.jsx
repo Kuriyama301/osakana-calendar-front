@@ -1,20 +1,20 @@
 import React from 'react';
 import MainCalendar from '../components/MainCalendar';
-import SeasonalFishButton from '../components/SeasonalFishButton';
+import './HomePage.css';
 
-function HomePage() {
-  const handleSeasonalFishClick = () => {
-    console.log('旬の魚ボタンがクリックされました');
-    // ここに旬の魚モーダルを開く処理を追加します
-  };
-
+const HomePage = () => {
   return (
     <div className="home-page">
-      <h1>オサカナカレンダー</h1>
-      <MainCalendar />
-      <SeasonalFishButton onClick={handleSeasonalFishClick} date="2023-09-14" />
+      <header className="header">
+        <h1>オサカナカレンダー</h1>
+      </header>
+      <main className="main-content">
+        <div className="calendar-container">
+          <MainCalendar />
+        </div>
+      </main>
     </div>
   );
-}
+};
 
 export default HomePage;

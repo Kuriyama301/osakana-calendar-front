@@ -1,100 +1,77 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import InfiniteScroll from 'react-infinite-scroller';
-import { format, addDays, subDays, isValid, addYears, subYears, isAfter, isBefore } from 'date-fns';
-import { ja } from 'date-fns/locale';
+import React, { useState, useEffect, useRef } from 'react';
+import './MainCalendar.css';
 
-const InfiniteScrollCalendar = () => {
-  const [dates, setDates] = useState([]);
-  const [hasMore, setHasMore] = useState({ past: true, future: true });
-
-  const today = useMemo(() => new Date(), []);
-  const oneYearAgo = useMemo(() => subYears(today, 1), [today]);
-  const oneYearFromNow = useMemo(() => addYears(today, 1), [today]);
+const MainCalendar = () => {
+  const [calendarData, setCalendarData] = useState([]);
+  const todayRef = useRef(null);
 
   useEffect(() => {
-    // 初期日付を設定（今日を中心に前後3日ずつ）
-    const initialDates = [];
-    for (let i = -3; i <= 3; i++) {
-      initialDates.push(addDays(today, i));
-    }
-    setDates(initialDates);
-  }, [today]);
-
-  const loadMore = useCallback((direction) => {
-    console.log(`loadMore called with direction: ${direction}`);
-    setDates(prevDates => {
-      const newDates = [...prevDates];
-      const startDate = direction === 'past' ? newDates[0] : newDates[newDates.length - 1];
-      
-      if (!isValid(startDate)) {
-        console.error('Invalid startDate:', startDate);
-        return prevDates; // 変更を加えずに終了
-      }
-
-      const datesToAdd = [];
-      for (let i = 1; i <= 7; i++) {
-        const newDate = direction === 'past' ? subDays(startDate, i) : addDays(startDate, i);
-        
-        if (!isValid(newDate)) {
-          console.error('Invalid newDate:', newDate);
-          continue; // このイテレーションをスキップ
-        }
-
-        if (direction === 'past' && isBefore(newDate, oneYearAgo)) {
-          setHasMore(prev => ({ ...prev, past: false }));
-          break;
-        } else if (direction === 'future' && isAfter(newDate, oneYearFromNow)) {
-          setHasMore(prev => ({ ...prev, future: false }));
-          break;
-        }
-        
-        datesToAdd.push(newDate);
-      }
-      
-      return direction === 'past' ? [...datesToAdd, ...newDates] : [...newDates, ...datesToAdd];
-    });
-  }, [oneYearAgo, oneYearFromNow]);
-
-  const DateItem = useCallback(({ date }) => {
-    if (!isValid(date)) {
-      console.error('Invalid date in DateItem:', date);
-      return null;
-    }
-    return (
-      <div style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
-        <div>{format(date, 'yyyy/MM/dd', { locale: ja })}</div>
-        <div>{format(date, 'EEEE', { locale: ja })}</div>
-      </div>
-    );
+    generateCalendarData(new Date());
   }, []);
 
+  useEffect(() => {
+    if (todayRef.current) {
+      todayRef.current.scrollIntoView({ behavior: 'auto', block: 'center' });
+    }
+  }, [calendarData]);
+
+  const generateCalendarData = (centerDate) => {
+    const data = [];
+    const start = new Date(centerDate);
+    start.setFullYear(start.getFullYear() - 1);
+    
+    // Generate data for 2 years
+    for (let i = 0; i < 365 * 2; i++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + i);
+      data.push(date);
+    }
+
+    setCalendarData(data);
+  };
+
+  const formatDate = (date) => {
+    const days = ['日', '月', '火', '水', '木', '金', '土'];
+    return {
+      month: `${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`,
+      day: days[date.getDay()]
+    };
+  };
+
+  const isToday = (date) => date.toDateString() === new Date().toDateString();
+
   return (
-    <div style={{ height: '300px', overflow: 'auto' }}>
-      <InfiniteScroll
-        pageStart={0}
-        loadMore={() => loadMore('past')}
-        hasMore={hasMore.past}
-        useWindow={false}
-        isReverse={true}
-        threshold={100}
-        loader={<div key="past-loader">過去の日付を読み込み中...</div>}
-      >
-        {dates.map((date, index) => (
-          <DateItem key={`date-${index}`} date={date} />
-        ))}
-      </InfiniteScroll>
-      <InfiniteScroll
-        pageStart={0}
-        loadMore={() => loadMore('future')}
-        hasMore={hasMore.future}
-        useWindow={false}
-        threshold={100}
-        loader={<div key="future-loader">未来の日付を読み込み中...</div>}
-      >
-        <div style={{ height: 1 }} />
-      </InfiniteScroll>
+    <div className="main-calendar">
+      <div className="calendar-header">
+        <h1 className="calendar-title">オサカナカレンダー</h1>
+      </div>
+      <div className="calendar-container">
+        {calendarData.map((date, index) => {
+          const { month, day } = formatDate(date);
+          return (
+            <div 
+              key={index}
+              className={`calendar-day ${isToday(date) ? 'today' : ''}`}
+              ref={isToday(date) ? todayRef : null}
+            >
+              <div className="date">
+                <span className="date-month">{month}</span>
+                <span className="date-day">{day}</span>
+              </div>
+              <div className="fish-info">
+                仏滅
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="calendar-footer">
+        <button className="refresh-button" onClick={() => generateCalendarData(new Date())}>
+          <span className="refresh-icon">↻</span>
+        </button>
+      </div>
     </div>
   );
 };
 
-export default InfiniteScrollCalendar;
+export default MainCalendar;

@@ -33,8 +33,9 @@ const MainCalendar = () => {
   const formatDate = (date) => {
     const days = ['日', '月', '火', '水', '木', '金', '土'];
     return {
-      month: `${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`,
-      day: days[date.getDay()]
+      month: String(date.getMonth() + 1).padStart(2, '0'),
+      day: String(date.getDate()).padStart(2, '0'),
+      weekday: days[date.getDay()]
     };
   };
 
@@ -47,7 +48,7 @@ const MainCalendar = () => {
       </div>
       <div className="calendar-container">
         {calendarData.map((date, index) => {
-          const { month, day } = formatDate(date);
+          const { month, day, weekday } = formatDate(date);
           return (
             <div 
               key={index}
@@ -57,6 +58,7 @@ const MainCalendar = () => {
               <div className="date">
                 <span className="date-month">{month}</span>
                 <span className="date-day">{day}</span>
+                <span className="date-weekday">{weekday}</span>
               </div>
               <div className="fish-info">
                 仏滅

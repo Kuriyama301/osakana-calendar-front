@@ -33,7 +33,7 @@
 .calendar-day {
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding: 0.5rem 1rem;
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -47,21 +47,27 @@
 
 .date {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  width: 60px;
-  margin-right: 1rem;
+  width: 120px;
 }
 
 .date-month {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #4a90e2;
+  margin-right: 0.5rem;
+}
+
+.date-day {
+  font-size: 1.4rem;
   font-weight: bold;
   color: #4a90e2;
 }
 
-.date-day {
-  font-size: 0.9rem;
+.date-weekday {
+  font-size: 1rem;
   color: #666;
+  margin-left: 0.5rem;
 }
 
 .fish-info {

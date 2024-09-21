@@ -20,13 +20,13 @@ const MainCalendar = () => {
     const start = new Date(centerDate);
     start.setFullYear(start.getFullYear() - 1);
     
-    // Generate data for 2 years
-    for (let i = 0; i < 365 * 2; i++) {
-      const date = new Date(start);
-      date.setDate(start.getDate() + i);
-      data.push(date);
+    const end = new Date(start);
+    end.setFullYear(end.getFullYear() + 2);
+    
+    for (let date = new Date(start); date < end; date.setDate(date.getDate() + 1)) {
+      data.push(new Date(date));
     }
-
+  
     setCalendarData(data);
   };
 
@@ -52,13 +52,12 @@ const MainCalendar = () => {
               className={`calendar-day ${isToday(date) ? 'today' : ''}`}
               ref={isToday(date) ? todayRef : null}
             >
-              <div className="date">
-                <span className="date-month">{month}</span>
-                <span className="date-day">{day}</span>
-                <span className="date-weekday">{weekday}</span>
-              </div>
-              <div className="fish-info">
-                <span className="fish-status">仏滅</span>
+              <div className="date-container">
+                <div className="date-label">Date</div>
+                <div className="date">
+                  <span className="date-month-day">{month}{day}</span>
+                  <span className="date-weekday">{weekday}</span>
+                </div>
               </div>
             </div>
           );

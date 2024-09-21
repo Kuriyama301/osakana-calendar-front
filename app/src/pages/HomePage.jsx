@@ -6,7 +6,7 @@ const HomePage = () => {
   return (
     <div className="home-page">
       <header className="header">
-        <h1>オサカナカレンダー</h1>
+        {/* <h1>オサカナカレンダー</h1> */}
       </header>
       <main className="main-content">
         <div className="calendar-container">

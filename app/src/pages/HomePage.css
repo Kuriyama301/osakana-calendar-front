@@ -1,0 +1,45 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  width: 100%; /* 幅を100%にする */
+  text-align: center; /* テキストを中央揃えにする */
+}
+.header h1 {
+  color: #6c3ce1;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.calendar-container {
+  width: 100%;
+  max-width: 800px;
+}
+
+@media (max-width: 600px) {
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .calendar-container {
+    max-width: 100%;
+  }
+}

@@ -43,9 +43,6 @@ const MainCalendar = () => {
 
   return (
     <div className="main-calendar">
-      <div className="calendar-header">
-        <h1 className="calendar-title">オサカナカレンダー</h1>
-      </div>
       <div className="calendar-container">
         {calendarData.map((date, index) => {
           const { month, day, weekday } = formatDate(date);
@@ -61,7 +58,7 @@ const MainCalendar = () => {
                 <span className="date-weekday">{weekday}</span>
               </div>
               <div className="fish-info">
-                仏滅
+                <span className="fish-status">仏滅</span>
               </div>
             </div>
           );

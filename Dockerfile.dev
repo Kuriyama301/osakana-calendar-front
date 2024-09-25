@@ -16,7 +16,7 @@ COPY app ./
 RUN npx tailwindcss init -p
 
 # Tailwind CSSをビルド
-RUN npm run build:css
+# RUN npm run build:css
 
 # node_modulesの所有者を変更
 RUN chown -R node:node /app

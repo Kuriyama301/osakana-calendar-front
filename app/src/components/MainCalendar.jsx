@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './MainCalendar.css';
 
 const MainCalendar = () => {
   const [calendarData, setCalendarData] = useState([]);
@@ -42,30 +41,31 @@ const MainCalendar = () => {
   const isToday = (date) => date.toDateString() === new Date().toDateString();
 
   return (
-    <div className="main-calendar">
-      <div className="calendar-container">
+    <div className="flex flex-col h-screen bg-gray-100">
+      <div className="flex-grow overflow-y-auto scroll-smooth p-2">
         {calendarData.map((date, index) => {
           const { month, day, weekday } = formatDate(date);
           return (
             <div 
               key={index}
-              className={`calendar-day ${isToday(date) ? 'today' : ''}`}
+              className={`flex flex-col justify-start p-4 mb-2 bg-blue-500 rounded-lg text-white h-24 relative ${isToday(date) ? 'ring-2 ring-yellow-400' : ''}`}
               ref={isToday(date) ? todayRef : null}
             >
-              <div className="date-container">
-                <div className="date-label">Date</div>
-                <div className="date">
-                  <span className="date-month-day">{month}{day}</span>
-                  <span className="date-weekday">{weekday}</span>
-                </div>
+              <div className="text-sm tracking-widest mb-1">Date</div>
+              <div className="flex items-baseline">
+                <span className="text-3xl font-bold tracking-widest">{month}{day}</span>
+                <span className="text-xl ml-2">{weekday}</span>
               </div>
             </div>
           );
         })}
       </div>
-      <div className="calendar-footer">
-        <button className="refresh-button" onClick={() => generateCalendarData(new Date())}>
-          <span className="refresh-icon">↻</span>
+      <div className="p-4">
+        <button 
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => generateCalendarData(new Date())}
+        >
+          <span className="transform rotate-180 inline-block">↻</span>
         </button>
       </div>
     </div>

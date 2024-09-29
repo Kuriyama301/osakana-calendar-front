@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SeasonalFishModal from './SeasonalFishModal';
-import calendarBackgroundSvg from '../assets/calendar-background.svg';
+import calendarBackgroundSvg from '@/assets/calendar-background.svg';
 
 const MainCalendar = () => {
   const [calendarData, setCalendarData] = useState([]);

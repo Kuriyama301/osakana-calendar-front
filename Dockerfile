@@ -1,12 +1,12 @@
 # ベースイメージ
 FROM node:20-alpine as base
 WORKDIR /app
-COPY package*.json ./
+COPY app/package*.json ./
 
 # 開発環境
 FROM base as development
 RUN npm ci || npm install
-COPY . .
+COPY app ./
 RUN npm install -D tailwindcss@latest postcss@latest autoprefixer@latest
 RUN npx tailwindcss init -p
 RUN chown -R node:node /app
@@ -18,7 +18,7 @@ CMD ["npm", "run", "dev", "--", "--host"]
 FROM base as build
 RUN npm ci || npm install
 RUN npm install -D tailwindcss@latest postcss@latest autoprefixer@latest
-COPY . .
+COPY app ./
 RUN npx tailwindcss init -p
 RUN npm run build
 

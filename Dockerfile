@@ -1,3 +1,8 @@
+# ベースイメージ
+FROM node:20-alpine as base
+WORKDIR /app
+COPY app/package*.json ./
+
 # ビルドステージ
 FROM base as build
 RUN npm ci || npm install

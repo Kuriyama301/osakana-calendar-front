@@ -69,21 +69,18 @@ const MainCalendar = () => {
               onClick={() => handleDateClick(date)}
             >
               <div className="text-sm tracking-widest mb-1 text-white">Date</div>
-              <div className="flex items-baseline">
-                <span className="text-3xl font-bold tracking-widest text-white">{month}{day}</span>
-                <span className="text-xl ml-2 text-white">{weekday}</span>
+              <div className="flex items-baseline translate-y-[12px]">
+                <span className="inline-flex justify-center w-24 text-5xl font-bold tracking-widest text-white relative -top-3 font-mono">
+                  <span className="w-12 text-right">{month}</span>
+                  <span className="w-12 text-left translate-x-[20px]">{day}</span>
+                </span>
+                <span className="text-3xl ml-2 text-white relative -top-3.5 translate-x-[40px]">
+                  {weekday}
+                </span>
               </div>
             </div>
           );
         })}
-      </div>
-      <div className="p-4">
-        <button 
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => generateCalendarData(new Date())}
-        >
-          <span className="transform rotate-180 inline-block">↻</span>
-        </button>
       </div>
       <SeasonalFishModal 
         isOpen={isModalOpen} 

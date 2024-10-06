@@ -3,13 +3,10 @@ import MainCalendar from '../components/MainCalendar';
 
 const HomePage = () => {
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="bg-blue-600 text-white p-4">
-        <h1 className="text-2xl font-bold">オサカナカレンダー</h1>
-      </header>
-      <main className="flex-grow">
+    <div className="flex justify-center px-4">
+      <div className="w-full max-w-[600px]">
         <MainCalendar />
-      </main>
+      </div>
     </div>
   );
 };

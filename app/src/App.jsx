@@ -6,9 +6,9 @@ import Header from './components/Header';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100">
-        <Header />
-        <main className="container mx-auto px-4 py-8">
+      <div className="flex flex-col h-screen overflow-hidden bg-gray-100">
+        <Header className="flex-shrink-0" />
+        <main className="flex-grow overflow-hidden">
           <Routes>
             <Route path="/" element={<HomePage />} />
           </Routes>

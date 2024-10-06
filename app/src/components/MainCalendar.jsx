@@ -51,7 +51,7 @@ const MainCalendar = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
-      <div className="flex-grow overflow-y-auto scroll-smooth p-2">
+      <div className="flex-grow overflow-y-auto scrollbar-hide">
         {calendarData.map((date, index) => {
           const { month, day, weekday } = formatDate(date);
           return (

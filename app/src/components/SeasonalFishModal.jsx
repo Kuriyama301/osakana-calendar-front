@@ -39,6 +39,14 @@ const SeasonalFishModal = ({ isOpen, onClose, currentDate }) => {
 
   if (!isOpen) return null;
 
+  // currentDate を適切にフォーマットする関数
+  const formatDate = (date) => {
+    if (date instanceof Date) {
+      return date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    return date; // すでに文字列の場合はそのまま返す
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div ref={modalRef} className="bg-white rounded-lg p-6 w-[90%] max-w-md max-h-[90vh] overflow-y-auto">
@@ -51,7 +59,7 @@ const SeasonalFishModal = ({ isOpen, onClose, currentDate }) => {
             ✕
           </button>
         </div>
-        <p className="text-sm text-gray-600 mb-4">{currentDate}</p>
+        <p className="text-sm text-gray-600 mb-4">{formatDate(currentDate)}</p>
         {selectedFish ? (
           <FishDetails fish={selectedFish} onBack={() => setSelectedFish(null)} />
         ) : (

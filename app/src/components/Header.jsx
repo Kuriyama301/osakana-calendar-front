@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 
 function Header() {
   return (
-    <header className="bg-blue-500 p-4" style={{ width: '100%' }}> 
+    <header className="bg-white p-4 h-16"> {/* h-16 を追加してヘッダーの高さを固定 */}
       <nav className="flex justify-between items-center">
-        <Link to="/" className="text-white text-2xl font-bold">オサカナカレンダー</Link>
+        <Link to="/" className="text-blue-500 text-2xl font-bold">オサカナカレンダー</Link>
         <ul className="flex space-x-4">
         </ul>
       </nav>

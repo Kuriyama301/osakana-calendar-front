@@ -22,14 +22,14 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative min-h-screen bg-gray-100 pt-16">
+    <div ref={containerRef} className="relative min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative flex justify-center items-start">
+        <div className="relative flex justify-center items-start h-full">
           {/* SubCalendar */}
           <div
             className={`sub-calendar-container ${
               showSubCalendar ? "block" : "hidden"
-            } lg:block lg:w-80 fixed left-4 top-20 lg:sticky lg:top-4 lg:left-auto`}
+            } lg:block lg:w-80 fixed left-4 top-20 lg:sticky lg:top-20 lg:left-auto`}
           >
             <SubCalendar />
           </div>

@@ -24,7 +24,8 @@ const SubCalendar = () => {
       calendarDays.push(
         <div 
           key={i} 
-          className={`text-center text-sm cursor-pointer ${isSelected ? 'bg-blue-500 text-white rounded-full' : ''}`}
+          className={`text-center text-sm cursor-pointer ${
+            isSelected ? 'bg-blue-500 text-white rounded-full' : 'text-gray-700 hover:bg-gray-100'}`}
           onClick={() => setSelectedDateExternal(currentDate)}
         >
           {i}
@@ -44,27 +45,27 @@ const SubCalendar = () => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <div className="flex justify-between items-center mb-4">
+    <div className="bg-white p-6 rounded-lg shadow w-full">
+      <div className="flex justify-between items-center mb-6"> {/* margin-bottom を調整 */}
         <button 
           onClick={prevMonth} 
-          className="bg-white text-blue-500 text-xl font-bold w-8 h-8 rounded-full border border-blue-500 flex items-center justify-center hover:bg-blue-100 transition-colors duration-200"
+          className="bg-white text-blue-500 text-2xl font-bold w-10 h-10 rounded-full border border-blue-500 flex items-center justify-center hover:bg-blue-100 transition-colors duration-200"
         >
-          <ChevronLeft size={20} />
+          <ChevronLeft size={24} />
         </button>
-        <h2 className="text-lg font-semibold text-gray-800">
+        <h2 className="text-xl font-semibold text-gray-800">
           {selectedDate.getFullYear()}年 {selectedDate.getMonth() + 1}月
         </h2>
         <button 
           onClick={nextMonth} 
-          className="bg-white text-blue-500 text-xl font-bold w-8 h-8 rounded-full border border-blue-500 flex items-center justify-center hover:bg-blue-100 transition-colors duration-200"
+          className="bg-white text-blue-500 text-2xl font-bold w-10 h-10 rounded-full border border-blue-500 flex items-center justify-center hover:bg-blue-100 transition-colors duration-200"
         >
-          <ChevronRight size={20} />
+          <ChevronRight size={24} />
         </button>
       </div>
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-2">
         {['日', '月', '火', '水', '木', '金', '土'].map(day => (
-          <div key={day} className="text-center font-medium text-sm text-gray-600">
+          <div key={day} className="text-center font-medium text-base text-gray-600">
             {day}
           </div>
         ))}

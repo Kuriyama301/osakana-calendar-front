@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import FishDetails from './FishDetails'; // 新しく作成するコンポーネント
+import FishDetails from './FishDetails';
 
 const fishIcons = [
   { id: 1, name: 'マゴチ', imageUrl: '/api/placeholder/100/100' },
@@ -39,12 +39,11 @@ const SeasonalFishModal = ({ isOpen, onClose, currentDate }) => {
 
   if (!isOpen) return null;
 
-  // currentDate を適切にフォーマットする関数
   const formatDate = (date) => {
     if (date instanceof Date) {
       return date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
     }
-    return date; // すでに文字列の場合はそのまま返す
+    return date;
   };
 
   return (

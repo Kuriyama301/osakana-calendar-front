@@ -46,7 +46,7 @@ const SubCalendar = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow w-full">
-      <div className="flex justify-between items-center mb-6"> {/* margin-bottom を調整 */}
+      <div className="flex justify-between items-center mb-6">
         <button 
           onClick={prevMonth} 
           className="bg-white text-blue-500 text-2xl font-bold w-10 h-10 rounded-full border border-blue-500 flex items-center justify-center hover:bg-blue-100 transition-colors duration-200"

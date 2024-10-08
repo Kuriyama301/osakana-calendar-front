@@ -10,19 +10,19 @@ const HomePage = () => {
     const checkSize = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth;
-        const breakpoint = 1024; // lg breakpoint
+        const breakpoint = 1024;
         setShowSubCalendar(containerWidth >= breakpoint);
       }
     };
 
     window.addEventListener("resize", checkSize);
-    checkSize(); // 初期チェック
+    checkSize();
 
     return () => window.removeEventListener("resize", checkSize);
   }, []);
 
   return (
-    <div ref={containerRef} className="relative min-h-screen bg-gray-100">
+    <div ref={containerRef} className="relative min-h-screen bg-gray-100 pt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative flex justify-center items-start">
           {/* SubCalendar */}

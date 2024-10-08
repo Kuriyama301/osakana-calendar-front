@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import FishDetails from './FishDetails'; // 新しく作成するコンポーネント
+import FishDetails from './FishDetails';
 
 const fishIcons = [
   { id: 1, name: 'マゴチ', imageUrl: '/api/placeholder/100/100' },
@@ -39,6 +39,13 @@ const SeasonalFishModal = ({ isOpen, onClose, currentDate }) => {
 
   if (!isOpen) return null;
 
+  const formatDate = (date) => {
+    if (date instanceof Date) {
+      return date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    return date;
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div ref={modalRef} className="bg-white rounded-lg p-6 w-[90%] max-w-md max-h-[90vh] overflow-y-auto">
@@ -51,7 +58,7 @@ const SeasonalFishModal = ({ isOpen, onClose, currentDate }) => {
             ✕
           </button>
         </div>
-        <p className="text-sm text-gray-600 mb-4">{currentDate}</p>
+        <p className="text-sm text-gray-600 mb-4">{formatDate(currentDate)}</p>
         {selectedFish ? (
           <FishDetails fish={selectedFish} onBack={() => setSelectedFish(null)} />
         ) : (

@@ -48,23 +48,27 @@ const SubCalendar = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow w-full">
-      <div className="flex justify-between items-center mb-6">
-        <button 
-          onClick={prevMonth} 
-          className="bg-white text-blue-500 text-2xl font-bold w-10 h-10 rounded-full border border-blue-500 flex items-center justify-center hover:bg-blue-100 transition-colors duration-200"
-        >
-          <ChevronLeft size={24} />
-        </button>
-        <h2 className="text-xl font-semibold text-gray-800">
-          {displayedMonth.getFullYear()}年 {displayedMonth.getMonth() + 1}月
-        </h2>
-        <button 
-          onClick={nextMonth} 
-          className="bg-white text-blue-500 text-2xl font-bold w-10 h-10 rounded-full border border-blue-500 flex items-center justify-center hover:bg-blue-100 transition-colors duration-200"
-        >
-          <ChevronRight size={24} />
-        </button>
-      </div>
+      <div className="flex justify-center items-center mb-6">
+  <h2 className="text-xl font-semibold text-gray-800 mr-6">
+    {displayedMonth.getFullYear()}年 {displayedMonth.getMonth() + 1}月
+  </h2>
+  <div className="flex ml-4">
+    <button 
+      onClick={prevMonth} 
+      className="text-blue-500 bg-gray-100 w-10 h-10 flex items-center justify-center transition-all duration-200 ease-in-out mr-2 rounded-full hover:bg-gray-200 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-opacity-50 !p-0 !border-0"
+      aria-label="前の月"
+    >
+      <ChevronLeft size={24} />
+    </button>
+    <button 
+      onClick={nextMonth} 
+      className="text-blue-500 bg-gray-100 w-10 h-10 flex items-center justify-center transition-all duration-200 ease-in-out rounded-full hover:bg-gray-200 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-opacity-50 !p-0 !border-0"
+      aria-label="次の月"
+    >
+      <ChevronRight size={24} />
+    </button>
+  </div>
+</div>
       <div className="grid grid-cols-7 gap-2">
         {['日', '月', '火', '水', '木', '金', '土'].map(day => (
           <div key={day} className="text-center font-medium text-base text-gray-600">

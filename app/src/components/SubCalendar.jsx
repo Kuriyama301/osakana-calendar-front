@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCalendar } from '../CalendarContext.jsx';
 
 const SubCalendar = () => {
-  const { selectedDate, setSelectedDate } = useCalendar();
+  const { selectedDate, setSelectedDateExternal } = useCalendar();
 
   const daysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
   const firstDayOfMonth = (year, month) => new Date(year, month, 1).getDay();
@@ -37,11 +37,13 @@ const SubCalendar = () => {
   };
 
   const prevMonth = () => {
-    setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1));
+    const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1);
+    setSelectedDateExternal(newDate);
   };
 
   const nextMonth = () => {
-    setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1));
+    const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1);
+    setSelectedDateExternal(newDate);
   };
 
   return (

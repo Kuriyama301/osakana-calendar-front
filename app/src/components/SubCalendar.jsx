@@ -3,14 +3,14 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCalendar } from '../CalendarContext.jsx';
 
 const SubCalendar = () => {
-  const { selectedDate, setSelectedDateExternal } = useCalendar();
+  const { selectedDate, setSelectedDateExternal, displayedMonth, changeDisplayedMonth } = useCalendar();
 
   const daysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
   const firstDayOfMonth = (year, month) => new Date(year, month, 1).getDay();
 
   const renderCalendar = () => {
-    const year = selectedDate.getFullYear();
-    const month = selectedDate.getMonth();
+    const year = displayedMonth.getFullYear();
+    const month = displayedMonth.getMonth();
     const days = daysInMonth(year, month);
     const firstDay = firstDayOfMonth(year, month);
 
@@ -37,13 +37,13 @@ const SubCalendar = () => {
   };
 
   const prevMonth = () => {
-    const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1);
-    setSelectedDateExternal(newDate);
+    const newDate = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() - 1, 1);
+    changeDisplayedMonth(newDate);
   };
 
   const nextMonth = () => {
-    const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1);
-    setSelectedDateExternal(newDate);
+    const newDate = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() + 1, 1);
+    changeDisplayedMonth(newDate);
   };
 
   return (
@@ -56,7 +56,7 @@ const SubCalendar = () => {
           <ChevronLeft size={24} />
         </button>
         <h2 className="text-xl font-semibold text-gray-800">
-          {selectedDate.getFullYear()}年 {selectedDate.getMonth() + 1}月
+          {displayedMonth.getFullYear()}年 {displayedMonth.getMonth() + 1}月
         </h2>
         <button 
           onClick={nextMonth} 

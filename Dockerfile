@@ -10,8 +10,9 @@ RUN npm install -D tailwindcss@latest postcss@latest autoprefixer@latest
 COPY app ./
 RUN npx tailwindcss init -p
 RUN npm run build
+
 # 静的ファイルを明示的にコピー
-# COPY app/src/assets ./dist/assets
+COPY app/src/assets ./dist/assets
 
 # 本番環境
 FROM node:20-alpine as production

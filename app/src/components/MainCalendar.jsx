@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useImperativeHandle, useCallback } from 'react';
 import { useCalendar } from '../CalendarContext';
 import SeasonalFishModal from './SeasonalFishModal';
-import calendarBackgroundSvg from '@/assets/calendar-background.svg';
 
 const MainCalendar = React.forwardRef((props, ref) => {
   const { selectedDate, mainCalendarRef, isExternalSelection } = useCalendar();
@@ -127,7 +126,7 @@ const MainCalendar = React.forwardRef((props, ref) => {
                 isToday(date) ? 'ring-2 ring-yellow-400 today' : ''
               } cursor-pointer`}
               style={{
-                backgroundImage: `url(${calendarBackgroundSvg})`,
+                backgroundImage: `url(/calendar-background.svg)`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}

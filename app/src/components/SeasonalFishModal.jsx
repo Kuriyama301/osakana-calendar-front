@@ -19,38 +19,30 @@ const SeasonalFishModal = ({
   if (!isOpen) return null;
 
   // 日付の比較関数
-  const isDateInSeason = (startDate, endDate, currentDate) => {
-    const parseDate = (dateString) => {
-      const [year, month, day] = dateString.split('-').map(Number);
-      return new Date(year, month - 1, day);
-    };
+  const isDateInSeason = (season, currentDate) => {
+    const [year, month, day] = currentDate.replace(/年|月/g, '-').replace('日', '').split('-').map(Number);
+    const current = new Date(year, month - 1, day);
+    const currentMonthDay = current.getMonth() * 100 + current.getDate();
 
-    const start = parseDate(startDate);
-    const end = parseDate(endDate);
-    const current = parseDate(currentDate.replace(/年|月/g, '-').replace('日', ''));
+    const startMonthDay = (season.start_month - 1) * 100 + season.start_day;
+    const endMonthDay = (season.end_month - 1) * 100 + season.end_day;
 
-    const getMonthDay = (date) => date.getMonth() * 100 + date.getDate();
-    const currentMonthDay = getMonthDay(current);
-    const startMonthDay = getMonthDay(start);
-    const endMonthDay = getMonthDay(end);
+    const result = startMonthDay <= endMonthDay
+      ? currentMonthDay >= startMonthDay && currentMonthDay <= endMonthDay
+      : currentMonthDay >= startMonthDay || currentMonthDay <= endMonthDay;
 
-    // 年をまたがない場合
-    if (startMonthDay <= endMonthDay) {
-      return currentMonthDay >= startMonthDay && currentMonthDay <= endMonthDay;
-    }
-    // 年をまたぐ場合（例：11月1日から3月31日）
-    else {
-      return currentMonthDay >= startMonthDay || currentMonthDay <= endMonthDay;
-    }
+    console.log('isDateInSeason', { season, currentDate, currentMonthDay, startMonthDay, endMonthDay, result });
+
+    return result;
   };
 
   // 現在の日付に合う魚をフィルタリング
   const filteredFish = seasonalFish.filter((fish) =>
     fish.fish_seasons.some((season) => {
-      const inSeason = isDateInSeason(season.start_date, season.end_date, currentDate);
+      const inSeason = isDateInSeason(season, currentDate);
       console.log(`Fish ${fish.name} in season:`, inSeason, {
-        start: season.start_date,
-        end: season.end_date,
+        start: `${season.start_month}/${season.start_day}`,
+        end: `${season.end_month}/${season.end_day}`,
         current: currentDate
       });
       return inSeason;
@@ -58,7 +50,6 @@ const SeasonalFishModal = ({
   );
 
   console.log("Filtered seasonal fish:", filteredFish);
-
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">

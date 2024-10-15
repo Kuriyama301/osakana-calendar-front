@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useImperativeHandle, useCallback } from 'react';
 import { useCalendar } from '../CalendarContext';
 import SeasonalFishModal from './SeasonalFishModal';
+import { getFishByDate } from '../api/fish';
 
 const MainCalendar = React.forwardRef((props, ref) => {
   const { selectedDate, mainCalendarRef, isExternalSelection } = useCalendar();
@@ -9,6 +10,8 @@ const MainCalendar = React.forwardRef((props, ref) => {
   const [selectedModalDate, setSelectedModalDate] = useState('');
   const calendarRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [seasonalFish, setSeasonalFish] = useState([]);
+  const [error, setError] = useState(null);
 
   const scrollToDate = useCallback((date) => {
     const targetElement = document.getElementById(`date-${date.toISOString()}`);
@@ -108,9 +111,23 @@ const MainCalendar = React.forwardRef((props, ref) => {
 
   const isToday = (date) => date.toDateString() === new Date().toDateString();
 
-  const handleDateClick = (date) => {
+  const handleDateClick = async (date) => {
+    console.log('handleDateClick called', date);
     setSelectedModalDate(`${date.getFullYear()}年${formatDate(date).month}月${formatDate(date).day}日`);
-    setIsModalOpen(true);
+    setIsLoading(true);
+    setError(null);
+    try {
+      const fishData = await getFishByDate(date);
+      console.log('Fish data received:', fishData); // この行を追加
+      setSeasonalFish(fishData);
+      setIsModalOpen(true);
+      console.log('isModalOpen set to true');
+    } catch (error) {
+      console.error('Failed to fetch fish data:', error);
+      setError('データの取得に失敗しました。もう一度お試しください。');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -150,6 +167,9 @@ const MainCalendar = React.forwardRef((props, ref) => {
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)}
         currentDate={selectedModalDate}
+        seasonalFish={seasonalFish}
+        isLoading={isLoading}
+        error={error}
       />
     </div>
   );

@@ -1,80 +1,103 @@
-import React, { useState, useEffect, useRef } from 'react';
-import FishDetails from './FishDetails';
+import React from "react";
 
-const fishIcons = [
-  { id: 1, name: 'マゴチ', imageUrl: '/api/placeholder/100/100' },
-  { id: 2, name: 'サンマ', imageUrl: '/api/placeholder/100/100' },
-  { id: 3, name: 'サバ', imageUrl: '/api/placeholder/100/100' },
-  { id: 4, name: 'タイ', imageUrl: '/api/placeholder/100/100' },
-  { id: 5, name: 'アジ', imageUrl: '/api/placeholder/100/100' },
-  { id: 6, name: 'イワシ', imageUrl: '/api/placeholder/100/100' },
-  { id: 7, name: 'カツオ', imageUrl: '/api/placeholder/100/100' },
-  { id: 8, name: 'ブリ', imageUrl: '/api/placeholder/100/100' },
-  { id: 9, name: 'サケ', imageUrl: '/api/placeholder/100/100' },
-];
-
-const SeasonalFishModal = ({ isOpen, onClose, currentDate }) => {
-  const [selectedFish, setSelectedFish] = useState(null);
-  const modalRef = useRef(null);
-
-  useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleOutsideClick);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [isOpen, onClose]);
-
-  const handleFishClick = (fish) => {
-    setSelectedFish(fish);
-  };
+const SeasonalFishModal = ({
+  isOpen,
+  onClose,
+  currentDate,
+  seasonalFish,
+  isLoading,
+  error,
+}) => {
+  console.log("Rendering SeasonalFishModal", {
+    isOpen,
+    currentDate,
+    seasonalFish,
+    isLoading,
+    error,
+  });
 
   if (!isOpen) return null;
 
-  const formatDate = (date) => {
-    if (date instanceof Date) {
-      return date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+  // 日付の比較関数
+  const isDateInSeason = (startDate, endDate, currentDate) => {
+    const parseDate = (dateString) => {
+      const [year, month, day] = dateString.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    };
+
+    const start = parseDate(startDate);
+    const end = parseDate(endDate);
+    const current = parseDate(currentDate.replace(/年|月/g, '-').replace('日', ''));
+
+    const getMonthDay = (date) => date.getMonth() * 100 + date.getDate();
+    const currentMonthDay = getMonthDay(current);
+    const startMonthDay = getMonthDay(start);
+    const endMonthDay = getMonthDay(end);
+
+    // 年をまたがない場合
+    if (startMonthDay <= endMonthDay) {
+      return currentMonthDay >= startMonthDay && currentMonthDay <= endMonthDay;
     }
-    return date;
+    // 年をまたぐ場合（例：11月1日から3月31日）
+    else {
+      return currentMonthDay >= startMonthDay || currentMonthDay <= endMonthDay;
+    }
   };
 
+  // 現在の日付に合う魚をフィルタリング
+  const filteredFish = seasonalFish.filter((fish) =>
+    fish.fish_seasons.some((season) => {
+      const inSeason = isDateInSeason(season.start_date, season.end_date, currentDate);
+      console.log(`Fish ${fish.name} in season:`, inSeason, {
+        start: season.start_date,
+        end: season.end_date,
+        current: currentDate
+      });
+      return inSeason;
+    })
+  );
+
+  console.log("Filtered seasonal fish:", filteredFish);
+
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div ref={modalRef} className="bg-white rounded-lg p-6 w-[90%] max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-blue-600">旬の魚</h2>
-          <button 
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-          >
-            ✕
-          </button>
-        </div>
-        <p className="text-sm text-gray-600 mb-4">{formatDate(currentDate)}</p>
-        {selectedFish ? (
-          <FishDetails fish={selectedFish} onBack={() => setSelectedFish(null)} />
-        ) : (
-          <div className="grid grid-cols-3 gap-4">
-            {fishIcons.map((fish) => (
-              <div 
-                key={fish.id} 
-                className="aspect-square cursor-pointer"
-                onClick={() => handleFishClick(fish)}
-              >
-                <img src={fish.imageUrl} alt={fish.name} className="w-full h-full object-cover rounded" />
-                <p className="text-center mt-2">{fish.name}</p>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white p-6 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto text-gray-800">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">
+          {currentDate}の旬の魚
+        </h2>
+        {isLoading ? (
+          <p className="text-gray-800">データを読み込み中...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : filteredFish.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {filteredFish.map((fish) => (
+              <div key={fish.id} className="text-center">
+                {fish.image_url ? (
+                  <img
+                    src={`http://localhost:3000${fish.image_url}`}
+                    alt={fish.name}
+                    className="w-full h-32 object-cover mb-2 rounded-lg"
+                  />
+                ) : (
+                  <div className="w-full h-32 bg-gray-200 flex items-center justify-center mb-2 rounded-lg text-gray-800">
+                    画像なし
+                  </div>
+                )}
+                <p className="font-semibold text-gray-800">{fish.name}</p>
               </div>
             ))}
           </div>
+        ) : (
+          <p className="text-gray-800">この日付の旬の魚はありません。</p>
         )}
+        <button
+          onClick={onClose}
+          className="mt-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+        >
+          閉じる
+        </button>
       </div>
     </div>
   );

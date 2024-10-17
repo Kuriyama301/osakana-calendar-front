@@ -1,5 +1,7 @@
 import React from "react";
 
+console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
+
 const SeasonalFishModal = ({
   isOpen,
   onClose,
@@ -50,6 +52,7 @@ const SeasonalFishModal = ({
   );
 
   console.log("Filtered seasonal fish:", filteredFish);
+  console.log('Fish data:', JSON.stringify(filteredFish, null, 2));
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -65,11 +68,12 @@ const SeasonalFishModal = ({
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {filteredFish.map((fish) => (
               <div key={fish.id} className="text-center">
+                {console.log('Fish image_url:', fish.image_url)}
                 {fish.image_url ? (
-                  <img
-                    src={`http://localhost:3000${fish.image_url}`}
-                    alt={fish.name}
-                    className="w-full h-32 object-cover mb-2 rounded-lg"
+                  <img 
+                    src={`${import.meta.env.VITE_API_URL}${fish.image_url}`} 
+                    alt={fish.name} 
+                    className="w-full h-40 object-cover rounded-t-lg"
                   />
                 ) : (
                   <div className="w-full h-32 bg-gray-200 flex items-center justify-center mb-2 rounded-lg text-gray-800">

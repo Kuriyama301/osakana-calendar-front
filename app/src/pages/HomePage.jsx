@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import MainCalendar from "../components/MainCalendar";
-import SubCalendar from "../components/SubCalendar";
+import { MainCalendar, SubCalendar } from '../components';
 
 const HomePage = () => {
   const [showSubCalendar, setShowSubCalendar] = useState(true);

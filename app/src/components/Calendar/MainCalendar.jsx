@@ -1,17 +1,15 @@
-import React, { useState, useRef, useEffect, useImperativeHandle, useCallback } from 'react';
-import { useCalendar } from '../CalendarContext';
-import SeasonalFishModal from './SeasonalFishModal';
-import { getFishByDate } from '../api/fish';
+import React, { useRef, useEffect, useImperativeHandle, useCallback } from 'react';
+import { useCalendar } from '../../CalendarContext';
+import SeasonalFishModal from '../Fish/SeasonalFishModal';
+import { useCalendarLogic } from '../../hooks/useCalendarLogic';
+import { useFishModal } from '../../hooks/useFishModal';
+import { formatDate, isToday } from '../../utils/dateUtils';
 
 const MainCalendar = React.forwardRef((props, ref) => {
   const { selectedDate, mainCalendarRef, isExternalSelection } = useCalendar();
-  const [calendarData, setCalendarData] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedModalDate, setSelectedModalDate] = useState('');
+  const { calendarData, extendCalendarData } = useCalendarLogic();
+  const { isModalOpen, selectedModalDate, isLoading, seasonalFish, error, handleDateClick, closeModal } = useFishModal();
   const calendarRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [seasonalFish, setSeasonalFish] = useState([]);
-  const [error, setError] = useState(null);
 
   const scrollToDate = useCallback((date) => {
     const targetElement = document.getElementById(`date-${date.toISOString()}`);
@@ -29,20 +27,6 @@ const MainCalendar = React.forwardRef((props, ref) => {
       mainCalendarRef.current = { scrollToDate };
     }
   }, [mainCalendarRef, scrollToDate]);
-
-  const generateCalendarData = useCallback((startDate, endDate) => {
-    const data = [];
-    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
-      data.push(new Date(date));
-    }
-    return data;
-  }, []);
-
-  useEffect(() => {
-    const initialStartDate = new Date(new Date().getFullYear() - 5, 0, 1);
-    const initialEndDate = new Date(new Date().getFullYear() + 5, 11, 31);
-    setCalendarData(generateCalendarData(initialStartDate, initialEndDate));
-  }, [generateCalendarData]);
 
   useEffect(() => {
     if (isExternalSelection) {
@@ -66,27 +50,12 @@ const MainCalendar = React.forwardRef((props, ref) => {
     const isNearTop = scrollTop < clientHeight;
     const isNearBottom = scrollHeight - scrollTop - clientHeight < clientHeight;
 
-    if (isNearTop || isNearBottom) {
-      setIsLoading(true);
-      const currentStartDate = calendarData[0];
-      const currentEndDate = calendarData[calendarData.length - 1];
-
-      let newData;
-      if (isNearTop) {
-        const newStartDate = new Date(currentStartDate);
-        newStartDate.setFullYear(newStartDate.getFullYear() - 1);
-        newData = generateCalendarData(newStartDate, currentStartDate);
-        setCalendarData(prevData => [...newData, ...prevData]);
-      } else {
-        const newEndDate = new Date(currentEndDate);
-        newEndDate.setFullYear(newEndDate.getFullYear() + 1);
-        newData = generateCalendarData(currentEndDate, newEndDate);
-        setCalendarData(prevData => [...prevData, ...newData]);
-      }
-
-      setIsLoading(false);
+    if (isNearTop) {
+      extendCalendarData('past');
+    } else if (isNearBottom) {
+      extendCalendarData('future');
     }
-  }, [isLoading, calendarData, generateCalendarData]);
+  }, [isLoading, extendCalendarData]);
 
   useEffect(() => {
     const currentRef = calendarRef.current;
@@ -99,36 +68,6 @@ const MainCalendar = React.forwardRef((props, ref) => {
       }
     };
   }, [handleScroll]);
-
-  const formatDate = (date) => {
-    const days = ['日', '月', '火', '水', '木', '金', '土'];
-    return {
-      month: String(date.getMonth() + 1).padStart(2, '0'),
-      day: String(date.getDate()).padStart(2, '0'),
-      weekday: days[date.getDay()]
-    };
-  };
-
-  const isToday = (date) => date.toDateString() === new Date().toDateString();
-
-  const handleDateClick = async (date) => {
-    console.log('handleDateClick called', date);
-    setSelectedModalDate(`${date.getFullYear()}年${formatDate(date).month}月${formatDate(date).day}日`);
-    setIsLoading(true);
-    setError(null);
-    try {
-      const fishData = await getFishByDate(date);
-      console.log('Fish data received:', fishData); // この行を追加
-      setSeasonalFish(fishData);
-      setIsModalOpen(true);
-      console.log('isModalOpen set to true');
-    } catch (error) {
-      console.error('Failed to fetch fish data:', error);
-      setError('データの取得に失敗しました。もう一度お試しください。');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="flex flex-col h-screen bg-gray-100 pt-16">
@@ -165,7 +104,7 @@ const MainCalendar = React.forwardRef((props, ref) => {
       </div>
       <SeasonalFishModal 
         isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeModal}
         currentDate={selectedModalDate}
         seasonalFish={seasonalFish}
         isLoading={isLoading}

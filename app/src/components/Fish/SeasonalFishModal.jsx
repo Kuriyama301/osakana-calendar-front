@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import SeasonTerm from './SeasonTerm';
+import FishDetails from './FishDetails';
 
 const SeasonalFishModal = ({
   isOpen,
@@ -10,17 +11,44 @@ const SeasonalFishModal = ({
   isLoading,
   error,
 }) => {
-  const filteredFish = seasonalFish; // useFishFilterを使用しない場合
+  const [selectedFish, setSelectedFish] = useState(null);
+  const [isFishDetailsOpen, setIsFishDetailsOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (isOpen) {
+      setIsAnimating(true);
+    } else {
+      const timer = setTimeout(() => setIsAnimating(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  const handleFishClick = (fish) => {
+    setSelectedFish(fish);
+    setIsFishDetailsOpen(true);
+  };
+
+  const handleCloseSeasonalFishModal = () => {
+    setIsAnimating(false);
+    setTimeout(onClose, 300);
+  };
+
+  const filteredFish = seasonalFish;
+
+  if (!isAnimating && !isOpen) return null;
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
+      className={`fixed inset-0 bg-black transition-opacity duration-300 ease-in-out ${
+        isAnimating && isOpen ? 'bg-opacity-50' : 'bg-opacity-0'
+      } flex items-center justify-center z-50`}
+      onClick={handleCloseSeasonalFishModal}
     >
       <div 
-        className="bg-white rounded-lg text-gray-800 relative w-full mx-4 sm:mx-8 md:mx-auto md:max-w-2xl max-h-[90vh] flex flex-col overflow-hidden"
+        className={`bg-white rounded-lg text-gray-800 relative w-full mx-4 sm:mx-8 md:mx-auto md:max-w-2xl max-h-[90vh] flex flex-col overflow-hidden transform transition-all duration-300 ease-in-out ${
+          isAnimating && isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 bg-white z-10 p-4 sm:p-6 border-b border-gray-200">
@@ -44,7 +72,11 @@ const SeasonalFishModal = ({
           ) : filteredFish.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
               {filteredFish.map((fish) => (
-                <div key={fish.id} className="flex flex-col items-center justify-center text-center">
+                <div 
+                  key={fish.id} 
+                  className="flex flex-col items-center justify-center text-center cursor-pointer transition-transform duration-200 hover:scale-105"
+                  onClick={() => handleFishClick(fish)}
+                >
                   {fish.image_url ? (
                     <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center mb-2">
                       <img 
@@ -78,6 +110,12 @@ const SeasonalFishModal = ({
           )}
         </div>
       </div>
+
+      <FishDetails
+        isOpen={isFishDetailsOpen}
+        onClose={() => setIsFishDetailsOpen(false)}
+        fish={selectedFish}
+      />
     </div>
   );
 };

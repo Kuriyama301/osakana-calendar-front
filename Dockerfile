@@ -5,7 +5,7 @@ COPY app/package*.json ./
 
 # ビルドステージ
 FROM base as build
-RUN npm install
+RUN npm ci
 RUN npm install -D tailwindcss@latest postcss@latest autoprefixer@latest
 COPY app ./
 RUN npx tailwindcss init -p
@@ -18,8 +18,9 @@ WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/server.js ./
-RUN npm install --only=production
-ENV PORT=3000
+RUN npm ci --only=production
+ENV PORT=3000 \
+    NODE_ENV=production
 EXPOSE $PORT
 USER node
 CMD ["node", "server.js"]
